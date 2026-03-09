@@ -21,7 +21,7 @@ class Queue extends SqsQueue
      * @param  string  $queue
      * @return string
      */
-    protected function createPayload($job, $data = '', $queue = null)
+    protected function createPayload($job, $queue, $data = '', $delay = null)
     {
         if (!$job instanceof DispatcherJob) {
             return parent::createPayload($job, $data, $queue);
@@ -40,7 +40,8 @@ class Queue extends SqsQueue
     {
         if (!$queue) return Config::get('sqs-plain.default-handler');
 
-        $queue = end(explode('/', $queue));
+        $array = explode('/', $queue);
+        $queue = end($array);
 
         return (array_key_exists($queue, Config::get('sqs-plain.handlers')))
             ? Config::get('sqs-plain.handlers')[$queue]
